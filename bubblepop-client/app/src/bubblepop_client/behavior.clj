@@ -9,9 +9,13 @@
 (defn init-main [_]
   [[:transform-enable [:main :my-counter] :inc [{msg/topic [:my-counter]}]]])
 
+(defn swap-transform [_ message]
+  (:value message))
+
 (def example-app
   {:version 2
-   :transform [[:inc [:my-counter] inc-transform]]
+   :transform [[:inc [:my-counter] inc-transform]
+               [:swap [:**]        swap-transform]]
    :emit [{:init init-main}
-          [#{[:*]} (app/default-emitter [:main])]]})
+          [#{[:my-counter] [:other-counters :*]} (app/default-emitter [:main])]]})
 
